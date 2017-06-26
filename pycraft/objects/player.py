@@ -14,10 +14,10 @@ class Player(Character):
         self.dy = 0
         # A dict of player blocks with their respective quantities
         self.inventory = Storage()
-        self.inventory.store_item(0, 'Brick', 5)
-        self.inventory.store_item(1, 'Grass', 7)
-        self.inventory.store_item(2, 'WeakStone', 10)
-        self.inventory.store_item(3, 'Sand', 5)
+        self.inventory.store_item(0, 'Brick', 500)
+        self.inventory.store_item(1, 'Grass', 700)
+        self.inventory.store_item(2, 'WeakStone', 1000)
+        self.inventory.store_item(3, 'Sand', 500)
 
         self.current_item = 'Brick'
         self.current_item_index = 0
@@ -78,7 +78,8 @@ class Player(Character):
             if key != previous and key in blocks:
                 if not left and (previous == head or previous == feet):
                     continue
-                # Make sure the block isn't the player's head or feet in case of adding.
+                # Make sure the block isn't the player's head or feet in case 
+                # of adding.
                 return key, previous
             previous = key
             x, y, z = x + dx / m, y + dy / m, z + dz / m

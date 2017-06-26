@@ -1,5 +1,6 @@
-from pycraft.objects.object import WorldObject
+from pycraft.objects.character import Character
 
 
-class Enemy(WorldObject):
+class Enemy(Character):
+    """ Class to hold common logic among enemies """
     pass

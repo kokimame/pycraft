@@ -21,7 +21,7 @@ class GameStateRunning(GameState):
     def __init__(self, config, height, width):
         super(GameStateRunning, self).__init__()
         self.world = World()
-        self.player = Player(config["world"])
+        self.player = Player(config["player"])
 
         # The crosshairs at the center of the screen.
         self.reticle = None

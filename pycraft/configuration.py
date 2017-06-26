@@ -36,7 +36,7 @@ class ConfigurationLoader:
 
     def __init__(self):
         """
-            Initialize with defaut values
+            Initialize with default values
         """
         self.game_config = {
             "window": {
@@ -55,9 +55,9 @@ class ConfigurationLoader:
                 "down": "LSHIFT",
                 "fly": "TAB",
             },
-            "world": {
+            "player": {
                 "gravity": 20.0,
-                "player_height": 2,
+                "height": 2,
                 "max_jump_height": 2.0,
                 "terminal_velocity": 50,
                 "walking_speed": 5,

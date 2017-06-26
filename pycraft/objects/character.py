@@ -150,7 +150,7 @@ class Character(WorldObject):
             dy += self.dy * dt
         # collisions
         x, y, z = self.position
-        x, y, z = self.collide((x + dx, y + dy, z + dz), self.config["player_height"], objects)
+        x, y, z = self.collide((x + dx, y + dy, z + dz), self.config["height"], objects)
         self.position = (x, y, z)
 
     def collide(self, position, height, objects):
