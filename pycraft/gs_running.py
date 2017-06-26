@@ -5,7 +5,7 @@ from pycraft.objects.player import Player
 from pycraft.objects.block import get_block
 from pyglet.window import key, mouse
 import pyglet.graphics
-from pycraft.util import sectorize, cube_vertices, normalize
+from pycraft.util import sectorize, cube_vertices, get_label
 import pyglet.window
 import pyglet.gl as GL
 import math
@@ -20,20 +20,15 @@ NUMERIC_KEYS = [
 class GameStateRunning(GameState):
     def __init__(self, config, height, width):
         super(GameStateRunning, self).__init__()
-        self.world = World()
+        self.world = World(config)
         self.player = Player(config["player"])
 
         # The crosshairs at the center of the screen.
         self.reticle = None
         # The label that is displayed in the top left of the canvas.
-        self.game_info_label = pyglet.text.Label(
-            '', font_name='Arial', font_size=18,
-            x=10, y=height - 10, anchor_x='left', anchor_y='top',
-            color=(0, 0, 0, 255))
-        self.current_item_label = pyglet.text.Label(
-            '', font_name='Arial', font_size=18,
-            x=width - 10, y=10, anchor_x='right', anchor_y='bottom',
-            color=(0, 0, 0, 255))
+        self.game_info_label = get_label(10, height - 10, 'left', 'top')
+        self.chaser_label = get_label(10, height - 35, 'left', 'top')
+        self.current_item_label = get_label(width - 10, 10, 'right', 'bottom')
 
     def on_mouse_press(self, x, y, button, modifiers):
         if (button == mouse.RIGHT) or \
@@ -107,8 +102,9 @@ class GameStateRunning(GameState):
         self.set_3d(size)
         GL.glColor3d(1, 1, 1)
         # self.world.start_shader()
+        self.world.show_enemies()
         self.world.batch.draw()
-        self.world.stop_shader()
+        # self.world.stop_shader()
         self.draw_focused_block()
         self.set_2d(size)
         self.draw_labels()
@@ -153,6 +149,7 @@ class GameStateRunning(GameState):
         dt = min(dt, 0.2)
         for _ in range(m):
             self.player.update(dt / m, self.world.area.get_blocks())
+            [enemy.update(dt / m, self.world.area.get_blocks(), pad=0) for enemy in self.world.enemies]
 
     def draw_focused_block(self):
         """Draw black edges around the block that is currently under the
@@ -170,10 +167,13 @@ class GameStateRunning(GameState):
     def draw_labels(self):
         """Draw the label in the top left of the screen."""
         x, y, z = self.player.position
-        self.game_info_label.text = '%02d (%.2f, %.2f, %.2f) %d / %d' % (
-            pyglet.clock.get_fps(), x, y, z,
-            len(self.world._shown), len(self.world.area.get_blocks()))
+        self.game_info_label.text = '(%.2f, %.2f, %.2f) %d / %d [%02d]' % (
+            x, y, z, len(self.world._shown), len(self.world.area.get_blocks()),
+            pyglet.clock.get_fps())
         self.game_info_label.draw()
+        x, y, z = self.world.enemies[0].position
+        self.chaser_label.text = '(%.2f, %.2f, %.2f)' % (x, y, z)
+        self.chaser_label.draw()
         self.current_item_label.text = self.player.current_item if self.player.current_item else "No items in this inventory"
         self.current_item_label.draw()
 

@@ -1,3 +1,5 @@
+import pyglet
+
 # Size of sectors used to ease block loading.
 SECTOR_SIZE = 16
 
@@ -82,3 +84,9 @@ def reverse_sectorize(sector):
         for z in range(z_start, z_end):
             columns += [(x, z)]
     return tuple(columns)
+
+def get_label(x, y, anchor_x, anchor_y):
+    return pyglet.text.Label(
+            '', font_name='Arial', font_size=18,
+            x=x, y=y, anchor_x=anchor_x, anchor_y=anchor_y,
+            color=(0, 0, 0, 255))

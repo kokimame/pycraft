@@ -44,7 +44,7 @@ class Character(WorldObject):
         self.strafe_z = 0
         # Current (x, y, z) position in the world, specified with floats. Note
         # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 5, 0)
+        self.position = self.config['position']
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -125,7 +125,7 @@ class Character(WorldObject):
         dy += self.strafe_z
         return dx, dy, dz
 
-    def update(self, dt, objects):
+    def update(self, dt, objects, pad=0.25):
         """Private implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
 
@@ -150,10 +150,10 @@ class Character(WorldObject):
             dy += self.dy * dt
         # collisions
         x, y, z = self.position
-        x, y, z = self.collide((x + dx, y + dy, z + dz), self.config["height"], objects)
+        x, y, z = self.collide((x + dx, y + dy, z + dz), self.config["height"], objects, pad)
         self.position = (x, y, z)
 
-    def collide(self, position, height, objects):
+    def collide(self, position, height, objects, pad=0.25):
         """Checks if the character at the given `position` and `height`
         is colliding with any blocks in the world.
 
@@ -174,7 +174,6 @@ class Character(WorldObject):
         # have to count as a collision. If 0, touching terrain at all counts as
         # a collision. If .49, you sink into the ground, as if walking through
         # tall grass. If >= .5, you'll fall through the ground.
-        pad = 0.25
         p = list(position)
         np = normalize(position)
         for face in FACES:  # check all surrounding blocks

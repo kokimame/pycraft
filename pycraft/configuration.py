@@ -62,6 +62,16 @@ class ConfigurationLoader:
                 "terminal_velocity": 50,
                 "walking_speed": 5,
                 "flying_speed": 15,
+                "position": (0, 5, 0)
+            },
+            "chaser": {
+                "gravity": 20.0,
+                "height": 1,
+                "max_jump_height": 1.0,
+                "terminal_velocity": 50,
+                "walking_speed": 5,
+                "flying_speed": 15,
+                "position": (5, 5, 5)
             }
         }
 

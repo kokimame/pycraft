@@ -2,8 +2,10 @@ import time
 from collections import OrderedDict
 
 from noise.perlin import SimplexNoise
+
+import pyglet
+import pyglet.gl as GL
 from pyglet import image
-from pyglet.gl import GL_QUADS
 from pyglet.graphics import Batch, TextureGroup
 
 from pycraft.shader import Shader
@@ -11,6 +13,7 @@ from pycraft.util import cube_vertices, cube_shade
 from pycraft.world.area import Area
 from pycraft.world.opengl import PycraftOpenGL
 from pycraft.world.sector import Sector
+from pycraft.objects.chaser import Chaser
 
 simplex_noise2 = SimplexNoise(256).noise2
 
@@ -25,7 +28,11 @@ FACES = [
 
 
 class World:
-    def __init__(self):
+    def __init__(self, config):
+
+        # A list of enemies on the world
+        self.enemies = [Chaser(config["chaser"]), ]
+
         # A Batch is a collection of vertex lists for batched rendering.
         self.batch = Batch()
         # A TextureGroup manages an OpenGL texture.
@@ -129,10 +136,21 @@ class World:
         if block.identifier not in self.texture_group:
             self.texture_group[block.identifier] = TextureGroup(image.load(block.texture_path).get_texture())
         self._shown[coords] = self.batch.add(
-            24, GL_QUADS, self.texture_group[block.identifier],
+            24, GL.GL_QUADS, self.texture_group[block.identifier],
             ('v3f/static', vertex_data),
             ('c3f/static', shade_data),
             ('t2f/static', texture_data))
+
+    def show_enemies(self):
+        for enemy in self.enemies:
+            x, y, z = enemy.position
+            vertex_data = cube_vertices(x, y, z, 0.5)
+            shade_data = cube_shade(1, 1, 1, 1)
+            texture_data = enemy.texture
+            vertex_data = cube_vertices(x, y, z, 0.5)
+            GL.glColor3d(0, 0, 0)
+            GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
+            pyglet.graphics.draw(24, GL.GL_QUADS, ('v3f/static', vertex_data))
 
     def hide_block(self, coords, immediate=True):
         """Ensure all blocks that should be hidden are hide
